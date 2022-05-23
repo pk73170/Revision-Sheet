@@ -1,0 +1,87 @@
+Approach-1(Using Recursion)
+T.C.-O(2^N)
+S.C.-O(N)
+
+class Solution {
+  public:
+  int solve(int index,int tran_number,int K,int N,int A[])
+  {
+       if(index==N || tran_number==2*K)
+      return 0;
+      
+      
+      if(tran_number%2==0) //Buy
+      {
+        return max(-A[index]+solve(index+1,tran_number+1,K,N,A),
+                    0+ solve(index+1,tran_number,K,N,A));
+      }
+      else{
+          return max(A[index]+solve(index+1,tran_number+1,K,N,A),
+          0+solve(index+1,tran_number,K,N,A));
+      }
+  }
+    int maxProfit(int K, int N, int A[]) {
+        // code here
+        return solve(0,0,K,N,A);
+    }
+    
+Approach-2(Using Memoization)
+T.C.-O(N^2)
+S.C.-O(N^2)
+
+class Solution {
+  public:
+  int solve(int index,int tran_number,int K,int N,int A[],vector<vector<int>>& dp)
+  {
+       if(index==N || tran_number==2*K)
+      return 0;
+      
+      if(dp[index][tran_number]!=-1)
+      return dp[index][tran_number];
+      
+      if(tran_number%2==0) //Buy
+      {
+        return dp[index][tran_number]=max(-A[index]+solve(index+1,tran_number+1,K,N,A,dp),
+                    0+ solve(index+1,tran_number,K,N,A,dp));
+      }
+      else{
+          //sell 
+          return dp[index][tran_number]=max(A[index]+solve(index+1,tran_number+1,K,N,A,dp),
+          0+solve(index+1,tran_number,K,N,A,dp));
+      }
+  }
+    int maxProfit(int K, int N, int A[]) {
+        // code here
+        vector<vector<int>>dp(N,vector<int>(2*K,-1));
+        return solve(0,0,K,N,A,dp);
+    }
+};
+
+Approach-3(Using Tabulation)
+T.C.-O(N^2)
+S.C.-O(N^2)
+
+class Solution {
+  public:
+
+    int maxProfit(int K, int N, int A[]) {
+        // code here
+        vector<vector<int>>dp(N+1,vector<int>(2*K+1,0));
+        
+        for(int index=N-1;index>=0;index--)
+        {
+            for(int tran_number=2*K-1;tran_number>=0;tran_number--)
+            {
+                 if(tran_number%2==0) //Buy
+      {
+        dp[index][tran_number]=max(-A[index]+dp[index+1][tran_number+1],dp[index+1][tran_number]);
+      }
+      else{
+          //sell 
+          dp[index][tran_number]=max(A[index]+dp[index+1][tran_number+1],dp[index+1][tran_number]);
+      }
+            }
+        }
+        return dp[0][0];
+    }
+};
